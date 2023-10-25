@@ -55,7 +55,8 @@ const MovementController = () => {
         socket.emit("update_player_position", {
           id: playerId,
           x: localPlayerX,
-          y: localPlayerY
+          y: localPlayerY,
+          gameId: "11"
         })
         setPlayerX(localPlayerX)
         setPlayerY(localPlayerY)

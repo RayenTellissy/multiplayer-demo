@@ -52,7 +52,7 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   const handleSocket = () => {
-    const socket = io(import.meta.env.VITE_SOCKET_URL)
+    const socket = io(import.meta.env.VITE_SERVER_URL)
     setSocket(socket)
   }
 

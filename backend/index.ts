@@ -1,5 +1,7 @@
 require("dotenv").config()
 const express = require("express")
+const cors = require("cors")
+import { Request, Response } from "express"
 const http = require("http")
 const { Server } = require("socket.io")
 import { Player, gameData, leaveData, positionData } from "./types"
@@ -8,7 +10,7 @@ const PORT = 3000
 const app = express()
 const server = http.createServer(app)
 
-// app.use(cors())
+app.use(cors())
 
 const io = new Server(server, {
   cors: {
@@ -17,6 +19,10 @@ const io = new Server(server, {
 })
 
 var players: Player[] = []
+
+app.get("/getPlayers", (req: Request, res: Response) => {
+  res.send(players)
+})
 
 io.on("connection", (socket: any) => {
   console.log("user connected")
@@ -32,8 +38,7 @@ io.on("connection", (socket: any) => {
   })
 
   socket.on("update_player_position", (data: positionData) => {
-    console.log(data)
-    socket.emit("receive_player_position", { id: data.id, x: data.x, y: data.y })
+    socket.to(data.gameId).emit("receive_player_position", { id: data.id, x: data.x, y: data.y })
   })
 
   socket.on("disconnect", () => {

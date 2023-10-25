@@ -5,9 +5,7 @@ import { ContextProvider } from './components/Context/Context.tsx'
 import App from './App.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
     <ContextProvider>
       <App />
     </ContextProvider>
-  </React.StrictMode>,
 )
