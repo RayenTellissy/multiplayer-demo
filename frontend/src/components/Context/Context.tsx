@@ -72,7 +72,7 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
       setIsAPressed,
       isDPressed,
       setIsDPressed,
-      socket
+      socket,
     }}>
       { children }
     </Context.Provider>

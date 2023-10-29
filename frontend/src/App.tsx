@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 // components
 import Player from './components/Player/Player'
@@ -17,42 +16,40 @@ import MovementController from './utils/MovementController/MovementController'
 const App = () => {
   const { playerId, playerX, playerY, socket } = useContext(Context)
   const [players,setPlayers] = useState<PlayerType[] | null>(null)
-  const [player1,setPlayer1] = useState({ x: 0, y: 0 })
+  const playerXRef = useRef(playerX)
+  const playerYRef = useRef(playerY)
 
   useEffect(() => {
-    // fetchPlayers()
-  }, [])
-
-  useEffect(() => {
-    console.log(players)
-  }, [players])
+    playerXRef.current = playerX
+    playerYRef.current = playerY
+  }, [playerX, playerY])
 
   useEffect(() => {
     window.addEventListener("beforeunload", handleUnload)
     if(socket) {
+      console.log("joining")
       socket.emit("join_game", {
         id: playerId,
         gameId: "11"
       })
-      socket.on("player_joined", (data: PlayerType) => {
-        const playersCopy = players ? players : []
-        playersCopy.push(data)
-        setPlayers(playersCopy)
-      })
-      socket.on("receive_player_position", (data: PlayerType) => {
-        // const index = players?.findIndex(e => e.id === data.id)
-        console.log(players)
-        // if(index && index !== 1 && players) {
-        //   setPlayers(prevPlayers => {
-        //     const updatedPlayers = [...(prevPlayers || [])]
-        //     updatedPlayers[index] = data
-        //     return updatedPlayers
-        //   })
-        // }
+      socket.on("game_loop", (data: PlayerType[]) => {
+        console.log(playerXRef.current, playerYRef.current)
+        socket.emit("update_player_position", {
+          id: localStorage.getItem("id"),
+          x: playerXRef.current,
+          y: playerYRef.current,
+          gameId: "11"
+        })
+        setPlayers(data)
       })
     }
-    return () => window.removeEventListener("beforeunload", handleUnload)
-  }, [socket, players])
+    return () => {
+      if(socket) {
+        socket.off("game_loop")
+      }
+      window.removeEventListener("beforeunload", handleUnload)
+    }
+  }, [socket])
 
   const handleUnload = () => {
     if(socket) {
@@ -61,18 +58,11 @@ const App = () => {
       })
     }
   }
-
-  const fetchPlayers = async () => {
-    const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/getPlayers`)
-    setPlayers(response.data)
-    console.log(response.data)
-  }
   
   return (
     <div id='app-container'>
       <MovementController />
-      <Player x={playerX} y={playerY} />
-      {/* <Player x={player1.x} y={player1.y} /> */}
+      {/* <Player x={playerX} y={playerY} /> */}
       {players && players.map((e,i) => {
         return <Player key={i} x={e.x} y={e.y} />
       })}

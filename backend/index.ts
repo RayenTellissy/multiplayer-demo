@@ -20,6 +20,10 @@ const io = new Server(server, {
 
 var players: Player[] = []
 
+setInterval(() => {
+  io.emit("game_loop", players)
+}, 32)
+
 app.get("/getPlayers", (req: Request, res: Response) => {
   res.send(players)
 })
@@ -28,6 +32,8 @@ io.on("connection", (socket: any) => {
   console.log("user connected")
 
   socket.on("join_game", (data: gameData) => {
+    const index = players.findIndex(e => e.id === data.id)
+    if(index !== -1) return // player already in the lobby
     players.push({ id: data.id, x: 0, y: 0 })
     socket.join(data.gameId)
     socket.to(data.gameId).emit("player_joined", { id: data.id, x: 0, y: 0 })
@@ -38,7 +44,12 @@ io.on("connection", (socket: any) => {
   })
 
   socket.on("update_player_position", (data: positionData) => {
-    socket.to(data.gameId).emit("receive_player_position", { id: data.id, x: data.x, y: data.y })
+    console.log(data.x, data.y)
+    const index = players.findIndex(e => e.id === data.id)
+    if(index !== -1) {
+      players[index] = { id: data.id, x: data.x, y: data.y }
+    }
+    // socket.to(data.gameId).emit("receive_player_position", { id: data.id, x: data.x, y: data.y })
   })
 
   socket.on("disconnect", () => {

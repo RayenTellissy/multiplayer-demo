@@ -5,7 +5,6 @@ import Context from '../../components/Context/Context';
 
 const MovementController = () => {
   const {
-    playerId,
     playerX,
     setPlayerX,
     playerY,
@@ -17,8 +16,7 @@ const MovementController = () => {
     isAPressed,
     setIsAPressed,
     isDPressed,
-    setIsDPressed,
-    socket
+    setIsDPressed
   } = useContext(Context)
 
   // setting up event listeners for movement
@@ -52,12 +50,6 @@ const MovementController = () => {
       }
       
       if(playerX !== localPlayerX || playerY !== localPlayerY) {
-        socket.emit("update_player_position", {
-          id: playerId,
-          x: localPlayerX,
-          y: localPlayerY,
-          gameId: "11"
-        })
         setPlayerX(localPlayerX)
         setPlayerY(localPlayerY)
       }
