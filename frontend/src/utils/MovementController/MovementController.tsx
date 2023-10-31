@@ -32,9 +32,9 @@ const MovementController = () => {
 
   useEffect(() => {
     const movementLoop = setInterval(() => {
-      var localPlayerX = playerX
-      var localPlayerY = playerY
-      const velocity = 6
+      var localPlayerX: number = playerX
+      var localPlayerY: number = playerY
+      const velocity: number = 8
 
       if(isWPressed) {
         localPlayerY -= velocity

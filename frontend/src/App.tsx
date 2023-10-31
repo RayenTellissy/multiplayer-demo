@@ -58,11 +58,10 @@ const App = () => {
       })
     }
   }
-  
+
   return (
     <div id='app-container'>
       <MovementController />
-      {/* <Player x={playerX} y={playerY} /> */}
       {players && players.map((e,i) => {
         return <Player key={i} x={e.x} y={e.y} />
       })}

@@ -3,3 +3,8 @@ export type PlayerType = {
   x: number
   y: number
 }
+
+export type MapProps = {
+  x: number
+  y: number
+}
